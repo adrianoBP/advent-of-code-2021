@@ -9,14 +9,37 @@ const run = async () => {
     let counter = 0;
     let previousDepth = 0;
 
-    for (var i = 0; i < rows.length; i++) {
+    let groupedDepths = groupDepths(rows);
 
-        let currentDepth = parseInt(rows[i])
+    for (var i = 0; i < groupedDepths.length; i++) {
+
+        let currentDepth = groupedDepths[i];
         if (i > 0 && currentDepth > previousDepth) counter++;
         previousDepth = currentDepth;
     }
 
     console.log(counter);
 };
+
+const groupDepths = (rows) => {
+
+    let groupedDepths = [];
+    for (var i = 0; i < rows.length; i++) {
+
+        let currentValue = parseInt(rows[i]);
+
+        if (i == 0) {
+            groupedDepths.push(currentValue);
+        } else if (i == 1) {
+            groupedDepths[i - 1] += currentValue;
+            groupedDepths.push(currentValue);
+        } else {
+            groupedDepths[i - 2] += currentValue;
+            groupedDepths[i - 1] += currentValue;
+            groupedDepths.push(currentValue);
+        }
+    }
+    return groupedDepths;
+}
 
 run();
