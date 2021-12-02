@@ -8,15 +8,20 @@ const run = async () => {
 
     let currentDistance = 0;
     let currentDepth = 0;
+    let aim = 0;
 
     for (let row of rows) {
         let direction = row.split(' ')[0];
         let amount = parseInt(row.split(' ')[1]);
 
         switch (direction) {
-            case 'forward': currentDepth += amount; break;
-            case 'up': currentDistance -= amount; break;
-            case 'down': currentDistance += amount; break;
+            case 'forward': {
+                currentDistance += amount;
+                currentDepth += aim * amount;
+                break;
+            }
+            case 'up': aim -= amount; break;
+            case 'down': aim += amount; break;
         }
     }
 
