@@ -32,7 +32,8 @@ const groupDepths = (rows) => {
         let currentValue = parseInt(rows[i]);
         groupedDepths[i - 2] += currentValue;
         groupedDepths[i - 1] += currentValue;
-        groupedDepths.push(currentValue);
+        if (i < rows.length - 2)
+            groupedDepths.push(currentValue);
     }
     return groupedDepths;
 }
