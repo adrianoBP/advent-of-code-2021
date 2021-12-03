@@ -21,7 +21,7 @@ const run = async () => {
     const epsilon = binaryToDecimal(epsilonValues.reverse());
     console.log(gamma * epsilon);
 
-    // Lift support rating
+    // Life support rating
     const oxygen = binaryToDecimal(getMostCommonByChar(rows, false).split('').reverse());
     const co2 = binaryToDecimal(getMostCommonByChar(rows, true).split('').reverse());
     console.log(oxygen * co2);
