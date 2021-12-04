@@ -11,28 +11,22 @@ const run = async () => {
     let tables = getTables(rows.splice(1));
 
     let drawnNumbers = [];
-    let winningTables = [];
-    let playingTables = [...tables];
+    let lastWinningTable = null;
 
-    for (let i = 0; i < numbers.length && playingTables.length > 0; i++) {
+    for (let i = 0; i < numbers.length && tables.length > 0; i++) {
+
         drawnNumbers.push(numbers[i]);
 
-        let newPlayingTables = [];
-        [...playingTables].forEach(table => {
-            if (isBingo(table, drawnNumbers)) {
-                winningTables.push({
-                    table: table,
+        for (let j = tables.length - 1; j >= 0; j--) {
+            if (isBingo(tables[j], drawnNumbers)) {
+                lastWinningTable = {
+                    table: tables[j],
                     winningNumber: numbers[i]
-                });
-                tables.filter(t => t != table);
-            } else {
-                newPlayingTables.push(table);
+                };
+                tables.splice(j, 1);
             }
-        });
-        playingTables = newPlayingTables;
+        }
     }
-
-    let lastWinningTable = winningTables.pop();
 
     let sum = lastWinningTable.table
         .flat()
@@ -47,7 +41,7 @@ const getTables = (rows) => {
     for (let i = 0; i < rows.length; i += 6) {
 
         let table = [];
-        for (let j = i + 1; j < i + 6; j++) {
+        for (let j = i + 1; j < i + 6; j++) {  // Skip first empty line
             table.push(rows[j].split(' ').filter(x => x != ''));
         }
         tables.push(table);
@@ -60,13 +54,10 @@ const isBingo = (table, numbers) => {
 
     for (let i = 0; i < table.length; i++) {
 
-        if (table[i].every(x => numbers.includes(x))) {
-            return true;
-        }
-
-        if (table.map(x => x[i]).every(x => numbers.includes(x))) {
-            return true;
-        }
+        // Check horizontal
+        if (table[i].every(x => numbers.includes(x))) return true;
+        // Check vertical
+        if (table.map(x => x[i]).every(x => numbers.includes(x))) return true;
     }
 
     return false;
