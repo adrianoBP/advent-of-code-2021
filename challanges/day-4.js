@@ -11,20 +11,34 @@ const run = async () => {
     let tables = getTables(rows.splice(1));
 
     let drawnNumbers = [];
-    let bingoTable = null;
+    let winningTables = [];
+    let playingTables = [...tables];
 
-
-    for (let i = 0; i < numbers.length && !bingoTable; i++) {
+    for (let i = 0; i < numbers.length && playingTables.length > 0; i++) {
         drawnNumbers.push(numbers[i]);
 
-        tables.forEach(table => {
-            if (isBingo(table, drawnNumbers))
-                bingoTable = table;
+        let newPlayingTables = [];
+        [...playingTables].forEach(table => {
+            if (isBingo(table, drawnNumbers)) {
+                winningTables.push({
+                    table: table,
+                    winningNumber: numbers[i]
+                });
+                tables.filter(t => t != table);
+            } else {
+                newPlayingTables.push(table);
+            }
         });
+        playingTables = newPlayingTables;
     }
 
-    let sum = bingoTable.flat().filter(x => !drawnNumbers.includes(x)).map(x => parseInt(x)).reduce((a, b) => a + b);
-    console.log(sum * drawnNumbers.pop());
+    let lastWinningTable = winningTables.pop();
+
+    let sum = lastWinningTable.table
+        .flat()
+        .filter(x => !drawnNumbers.includes(x))
+        .map(x => parseInt(x)).reduce((a, b) => a + b);
+    console.log(sum * lastWinningTable.winningNumber);
 };
 
 const getTables = (rows) => {
