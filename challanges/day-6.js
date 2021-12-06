@@ -7,21 +7,32 @@ const run = async () => {
         .split('\n');
 
     const timers = rows[0].split(',').map(Number);
+    const groupedTimers = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-    for (let i = 0; i < 256; i++) {
-
-        for (let j = timers.length - 1; j >= 0; j--) {
-
-            timers[j] = timers[j] - 1;
-
-            if (timers[j] == -1) {
-                timers[j] = 6;
-                timers.push(8);
-            }
-        }
+    for (let timer of timers) {
+        groupedTimers[timer]++;
     }
 
-    console.log(timers.length);
+    for (let day = 1; day <= 256; day++) {
+
+        let toRenew = 0;
+        let toAdd = 0;
+
+        for (let i = 0; i < groupedTimers.length; i++) {
+
+            if (i == 0) {
+                toRenew = groupedTimers[i];
+                toAdd += groupedTimers[i];
+            }
+
+            groupedTimers[i] = i == 8 ? 0 : groupedTimers[i + 1];
+        }
+
+        groupedTimers[6] += toRenew;
+        groupedTimers[8] = toAdd;
+    }
+
+    console.log(groupedTimers.reduce((a, b) => a + b, 0));
 };
 
 
