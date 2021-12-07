@@ -21,14 +21,14 @@ const run = async () => {
     console.log(minimumCost);
 };
 
-function getCost(positions, distance) {
+function getCost(positions, destination) {
 
     let sumOfCosts = 0;
     for (let position of positions) {
-        sumOfCosts += Math.abs(position - distance);
+        const distance = Math.abs(position - destination);
+        sumOfCosts += distance * (distance + 1) / 2 ;
     }
     return sumOfCosts;
 }
-
 
 run();
