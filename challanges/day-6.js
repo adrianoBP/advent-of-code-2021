@@ -2,11 +2,11 @@ const fs = require('fs');
 
 const run = async () => {
 
-    const rows = fs.readFileSync(`${__dirname}/../inputs/day-6-input.txt`)
+    const timers = fs.readFileSync(`${__dirname}/../inputs/day-6-input.txt`)
         .toLocaleString()
-        .split('\n');
+        .split(',')
+        .map(Number);
 
-    const timers = rows[0].split(',').map(Number);
     const groupedTimers = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     for (let timer of timers) {
