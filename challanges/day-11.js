@@ -9,7 +9,10 @@ const run = async () => {
             .map(Number));
 
     let allFlashes = 0;
-    for (let iterations = 0; iterations < 100; iterations++) {
+    let iterations = 0;
+    let globalFlashFound = false;
+
+    while (!globalFlashFound) {
 
         // Step 1: increase all values by 1
         for (let y = 0; y < octopuses.length; y++) {
@@ -27,13 +30,19 @@ const run = async () => {
         }
 
         // Step 2.1: count all flashes
+        let newFlashes = 0;
         for (let y = 0; y < octopuses.length; y++) {
             for (let x = 0; x < octopuses[y].length; x++) {
                 if (octopuses[y][x] > 9) {
-                    allFlashes++;
+                    newFlashes++;
                 }
             }
         }
+
+        if (newFlashes === octopuses.length * octopuses[0].length)
+            globalFlashFound = true;
+
+        allFlashes += newFlashes;
 
         // Step 3: Set flashed to 0
         for (let y = 0; y < octopuses.length; y++) {
@@ -43,9 +52,11 @@ const run = async () => {
                 }
             }
         }
+
+        iterations++;
     }
 
-    console.log(allFlashes);
+    console.log(iterations);
 };
 
 const flashOctopuses = (octopuses, x, y, flashed) => {
