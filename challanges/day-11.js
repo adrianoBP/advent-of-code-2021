@@ -29,12 +29,13 @@ const run = async () => {
             }
         }
 
-        // Step 2.1: count all flashes
+        // Step 3: Count flashes and set to 0
         let newFlashes = 0;
         for (let y = 0; y < octopuses.length; y++) {
             for (let x = 0; x < octopuses[y].length; x++) {
                 if (octopuses[y][x] > 9) {
                     newFlashes++;
+                    octopuses[y][x] = 0;
                 }
             }
         }
@@ -42,25 +43,20 @@ const run = async () => {
         if (newFlashes === octopuses.length * octopuses[0].length)
             globalFlashFound = true;
 
-        allFlashes += newFlashes;
-
-        // Step 3: Set flashed to 0
-        for (let y = 0; y < octopuses.length; y++) {
-            for (let x = 0; x < octopuses[y].length; x++) {
-                if (octopuses[y][x] > 9) {
-                    octopuses[y][x] = 0;
-                }
-            }
-        }
+        // Part 1 solution
+        if (iterations < 100)
+            allFlashes += newFlashes;
 
         iterations++;
     }
 
-    console.log(iterations);
+    console.log(`Part 1: ${allFlashes}`);
+    console.log(`Part 2: ${iterations}`);
 };
 
 const flashOctopuses = (octopuses, x, y, flashed) => {
 
+    // If it was already flashed, don't flash it again
     if (flashed.includes(`${x},${y}`)) return;
 
     const octopus = {
@@ -133,6 +129,5 @@ const flashSurrounding = (octopuses, x, y) => {
 
     return newFlashed;
 }
-
 
 run();
