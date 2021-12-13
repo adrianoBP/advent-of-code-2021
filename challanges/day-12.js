@@ -9,7 +9,7 @@ const run = async () => {
     const connections = mapConnections(rows);
 
     const validPaths = [];
-    getPathsPerNode(connections, 'start', [], validPaths);
+    getPathsPerNode(connections, 'start', [], validPaths, false);
 
     console.log(validPaths.length);
 };
@@ -35,7 +35,7 @@ const mapConnections = (rows) => {
     return connections;
 };
 
-const getPathsPerNode = (connections, node, currentPath, validPaths) => {
+const getPathsPerNode = (connections, node, currentPath, validPaths, smallVisitedTwice) => {
 
     if (node == 'end') {
         validPaths.push([...currentPath, node]);
@@ -43,13 +43,19 @@ const getPathsPerNode = (connections, node, currentPath, validPaths) => {
     };
 
     // Do not explore small caves twice
-    if (node == node.toLowerCase() && currentPath.includes(node)) return currentPath
+    if (node == 'start' && currentPath.includes(node)) return currentPath;
+    if (node == node.toLowerCase() && currentPath.includes(node)) {
+        if (smallVisitedTwice)
+            return currentPath;
+        smallVisitedTwice = true;
+    }
+
     currentPath.push(node);
 
     const paths = [];
     for (let connection of connections[node]) {
 
-        const connectionPath = getPathsPerNode(connections, connection, [...currentPath], validPaths);
+        const connectionPath = getPathsPerNode(connections, connection, [...currentPath], validPaths, smallVisitedTwice);
         if (connectionPath) {
             paths.push(connectionPath);
         }
