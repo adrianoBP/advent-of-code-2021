@@ -9,8 +9,6 @@ const run = async () => {
 
     let { dots, instructions } = getParameters(rows);
 
-    instructions = [instructions[0]];
-
     for (let instruction of instructions) {
 
         if (instruction.axis === 'x') {
@@ -33,6 +31,8 @@ const run = async () => {
         }, []);
 
     }
+
+    printResult(dots);
 
     console.log(dots.length);
 };
@@ -62,5 +62,20 @@ const getParameters = (rows) => {
     return { dots, instructions };
 }
 
+const printResult = (dots) => {
+
+    const maxX = dots.reduce((acc, dot) => Math.max(acc, dot.x), 0);
+    const maxY = dots.reduce((acc, dot) => Math.max(acc, dot.y), 0);
+
+    dots = dots.map(dot => `${dot.x}${dot.y}`);
+
+    for (let y = 0; y <= maxY; y++) {
+        let row = '';
+        for (let x = 0; x <= maxX; x++) {
+            row += dots.includes(`${x}${y}`) ? '#' : '.';
+        }
+        console.log(row);
+    }
+}
 
 run();
