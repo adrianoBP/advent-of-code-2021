@@ -7,23 +7,34 @@ const run = async () => {
         .split('\n')
 
 
-    let { template, pairs } = getParameters(rows);
+    let { template, matches } = getParameters(rows);
 
-    for (let i = 0; i < 10; i++) {
-
-        template = addMatches(template, pairs);
+    let matchesCount = {};
+    for (let i = 0; i < template.length - 1; i++) {
+        const match = `${template[i]}${template[i + 1]}`;
+        matchesCount[match] = (matchesCount[match] || 0) + 1;
     }
 
-    const occurrences = template.split('').reduce((acc, curr) => {
+    for (let _ = 0; _ < 40; _++) {
 
-        if (acc[curr]) {
-            acc[curr]++;
-        } else {
-            acc[curr] = 1;
+        const newMatches = {};
+        for (let match in matchesCount) {
+
+            const [a, b] = matches[match];
+            newMatches[a] = (newMatches[a] || 0) + matchesCount[match];
+            newMatches[b] = (newMatches[b] || 0) + matchesCount[match];
         }
 
-        return acc;
-    }, {});
+        matchesCount = newMatches;
+    }
+
+    const occurrences = {};
+    for(let match in matchesCount) {
+
+        occurrences[match[0]] = (occurrences[match[0]] || 0) + matchesCount[match];
+    }
+
+    occurrences[template[template.length - 1]]++;
 
     const { max, min } = Object.keys(occurrences).reduce((acc, curr) => {
 
@@ -46,30 +57,18 @@ const run = async () => {
 const getParameters = (rows) => {
 
     const template = rows[0];
-    const pairs = rows.slice(2).map(row => {
+    const matches = rows.slice(2).map(row => {
 
         const [match, element] = row.split(' -> ');
         return { match, element };
     }).reduce((acc, curr) => {
 
-        acc[curr.match] = curr.element;
+        acc[curr.match] = [curr.match[0] + curr.element, curr.element + curr.match[1]];
         return acc;
     }, {});
 
-    return { template, pairs };
+    return { template, matches };
 };
 
-const addMatches = (template, pairs) => {
-
-    let result = ''
-    for (let i = 0; i < template.length - 1; i++) {
-
-        const currentMatch = template[i] + template[i + 1];
-        result += template[i] + pairs[currentMatch];
-    }
-    result += template[template.length - 1];
-
-    return result;
-};
 
 run();
