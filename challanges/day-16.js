@@ -22,25 +22,60 @@ const binaryToDecimal = (binary) => {
     return parseInt(binary, 2);
 };
 
-const decode = (binary) => {
+const decode = (binary, opType) => {
 
     let index = 0;
 
-    let totalVersion = 0;
+    let currentResult = 0;
 
-    while (index + 6 + 5 < binary.length) {
+    while (index + 6 + 5 <= binary.length) {
 
         const typeId = binaryToDecimal(binary.substring(index + 3, index + 6));
-        const currentVersion = binaryToDecimal(binary.substring(index, index + 3));
-        totalVersion += currentVersion;
-
         index += 6;
-
 
         if (typeId == 4) {
 
             const literal = binary.substring(index);
             let { code, currentIndex } = readLiteralPacket(literal);
+
+            switch (opType) {
+                case 0:
+                    currentResult += binaryToDecimal(code);
+                    break;
+                case 1:
+                    if (currentResult == 0) currentResult = 1;
+                    currentResult *= binaryToDecimal(code);
+                    break;
+                case 2: {
+                    let newResult = binaryToDecimal(code);
+                    if (newResult < currentResult || currentResult == 0) currentResult = newResult;
+                    break;
+                }
+                case 3: {
+                    const newResult = binaryToDecimal(code);
+                    if (newResult > currentResult) currentResult = newResult;
+                    break;
+                }
+                case 5: {
+                    const newResult = binaryToDecimal(code);
+                    if (currentResult == 0) currentResult = newResult;
+                    else currentResult = currentResult > newResult ? 1 : 0;
+                    break;
+                }
+                case 6: {
+                    const newResult = binaryToDecimal(code);
+                    if (currentResult == 0) currentResult = newResult;
+                    else currentResult = currentResult < newResult ? 1 : 0;
+                    break;
+                }
+                case 7: {
+                    const newResult = binaryToDecimal(code);
+                    if (currentResult == 0) currentResult = newResult;
+                    else currentResult = currentResult == newResult ? 1 : 0;
+                    break;
+                }
+            }
+
             index += currentIndex;
 
         } else {
@@ -48,15 +83,15 @@ const decode = (binary) => {
             const lengthTypeId = binary.substring(index, index + 1);
 
             if (lengthTypeId == '0') {
-                totalVersion += decode(binary.substring(++index + 15));
+                currentResult += decode(binary.substring(++index + 15), typeId);
             } else {
-                totalVersion += decode(binary.substring(++index + 11));
+                currentResult += decode(binary.substring(++index + 11), typeId);
             }
-            return totalVersion;
+            return currentResult;
         }
     }
 
-    return totalVersion;
+    return currentResult;
 };
 
 const readLiteralPacket = (binary) => {
