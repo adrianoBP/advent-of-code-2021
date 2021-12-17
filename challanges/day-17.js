@@ -7,10 +7,11 @@ const run = async () => {
 
     const { areaX1, areaX2, areaY1, areaY2 } = getParameters(input);
 
-    let startingAccX = 30;
+    let startingAccX = 1000;
     let startingAccY = 1000;
 
     let maxHeight = 0;
+    let successfulLaunches = 0;
 
     while (true) {
 
@@ -18,19 +19,20 @@ const run = async () => {
 
         if (result) {
             maxHeight = highest > maxHeight ? highest : maxHeight;
+            successfulLaunches++;
         }
 
-        if (startingAccY == 0) {
+        if (startingAccY == -1000) {
             startingAccX -= 1;
             startingAccY = 1000;
         } else startingAccY -= 1;
 
-        if (startingAccX == 00 && startingAccY == 0) {
+        if (startingAccX == 0 && startingAccY == -1000) {
             break;
         }
     }
 
-    console.log(maxHeight);
+    console.log(successfulLaunches);
 };
 
 const getParameters = (input) => {
